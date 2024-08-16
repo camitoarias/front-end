@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 interface AuthContextType {
@@ -9,13 +9,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:9090/api/messages/api/login', {
+      const response = await fetch('http://localhost:9090/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -24,10 +23,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (response.ok) {
-        console.log("hola me he autenticado correctamente")
+        console.log("hola me he autenticado correctamente");
         const { token } = await response.json();
-        localStorage.setItem('token', token);
+        console.log(token);
         setIsAuthenticated(true);
+        localStorage.setItem('token', token); // Guarda el token en localStorage si es necesario
       } else {
         alert('Credenciales incorrectas');
       }
@@ -52,6 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
+    console.error('useAuth debe ser usado dentro de un AuthProvider');
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;

@@ -1,18 +1,29 @@
 // src/components/SignInPage.tsx
 'use client'
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useAuth } from '@/app/Context/Auth-context';
 import { Container, Typography, TextField, Button, Box, CssBaseline } from '@mui/material';
 
 const SignInPage: React.FC = () => {
   const { login } = useAuth();
+  const {isAuthenticated} = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {  // Asegúrate de que handleSubmit sea async
     event.preventDefault();
-    login(username, password);
+    await login(username, password); // Aquí utilizamos await correctamente
+    // Aquí podrías manejar una redirección o alguna lógica adicional después del login.
+    console.log(isAuthenticated);
   };
+
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('User is authenticated!');
+      // Aquí puedes agregar lógica como redirigir al usuario o mostrar un mensaje
+    }
+  }, [isAuthenticated]);
 
   return (
     <Container component="main" maxWidth="xs">
